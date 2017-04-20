@@ -12,19 +12,25 @@ let upcommingMatchesIntent = [{
     'TEAMA': 'TEAM'
   },
   'utterances': [
-      '{|When} {|is} {|the} {|next|upcoming|} {|team} {-|TEAMA} {|game|matches}?',
-      "{|When} {|do} {|the} {|team} {-|TEAMA} play next?",
+      '{|When} {|is} {|the} {|next|upcoming|} {|team} {-|TEAMA} {|game|matches}',
+      "{|When} {|do} {|the} {|team} {-|TEAMA} play next",
       "{|is} {|team} {-|TEAMA} playing",
+      "{-|TEAMA} {|next} match",
       "upcoming matches"
   ]
 },function(req, res){
   var teamA = req.slot('TEAMA');
+  console.log('Team '+teamA);
   var dotaHelper = new DOTAHelper();
   var openDotaHelper = new OPENDOTAHelper();
   return openDotaHelper.getTeams().then(function(teams){
     var teamObj = openDotaHelper.getTeamByTeamName(teams,teamA);
-    return dotaHelper.getUpcommingMatches(teamObj.team_id).then(function(matches){
 
+    return dotaHelper.getUpcommingMatches(teamObj.team_id).then(function(matches){
+      if(matches.length === 0 ){
+        res.say('There are no upcoming matches for Team '+teamA );
+        return ;
+      }
       //res.say('Team '+teamA+' has '+matches.length+ ' upcoming matches');
       var oppTeam = matches[0].team1;
       if(matches[0].team1.team_id === teamObj.team_id){

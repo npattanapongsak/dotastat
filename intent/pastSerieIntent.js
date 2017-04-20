@@ -12,7 +12,7 @@ let pastSerieIntent = [{
 
     'Did {-|TEAMA} win',
     'Who won {|the} {-|TEAMA} game',
-    "What {|is} the score of {|the} {-|TEAMA} game?",
+    "What {|is} the score of {|the} {-|TEAMA} game",
     "{|team} {-|TEAMA} recent results"
   ]
 
@@ -20,11 +20,13 @@ let pastSerieIntent = [{
   var teamA = req.slot('TEAMA');
   var openDotaHelper = new OPENDOTAHelper();
   return openDotaHelper.getTeams().then(function(teams){
-    console.log(teams);
+    //console.log(teams);
+    console.log('PPP');
     var teamAId = openDotaHelper.getTeamByTeamName(teams,teamA);
-
+console.log(teamAId);
     return openDotaHelper.getTeamSeries(teamAId.team_id,1).then(function(series){
       let verb = "win";
+      console.log(series);
       if(series[0].win < series[0].lost){
         verb ='lost';
       }else if(series[0].win == series[0].lost){
