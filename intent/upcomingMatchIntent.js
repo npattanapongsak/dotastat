@@ -9,26 +9,37 @@ var moment = require('moment');
 require('moment-precise-range-plugin');
 let upcommingMatchesIntent = [{
   'slots': {
-    'TEAMA': 'TEAM'
+    'TEAMA': 'TEAM',
+    'DATE':'AMAZON.DATE'
   },
   'utterances': [
       '{|When} {|is} {|the} {|next|upcoming|} {|team} {-|TEAMA} {|game|matches}',
       "{|When} {|do} {|the} {|team} {-|TEAMA} play next",
       "{|is} {|team} {-|TEAMA} playing",
       "{-|TEAMA} {|next} match",
-      "upcoming matches"
+      //'{|is} {-|TEAMA} {|playing} {-|DATE}'
+      //"upcoming matches",
+      // "is [team] playing now|today|tomorow"
+
   ]
 },function(req, res){
   var teamA = req.slot('TEAMA');
-  console.log('Team '+teamA);
+  var date = req.slot('DATE');
+  console.log('Team '+teamA,date);
   var dotaHelper = new DOTAHelper();
   var openDotaHelper = new OPENDOTAHelper();
   return openDotaHelper.getTeams().then(function(teams){
     var teamObj = openDotaHelper.getTeamByTeamName(teams,teamA);
-
-    return dotaHelper.getUpcommingMatches(teamObj.team_id).then(function(matches){
+    let teamId ;
+    if(typeof teamA !== 'undefined' || teamObj.team_id ) teamId = teamObj.team_id;
+    return dotaHelper.getUpcommingMatches(teamId).then(function(matches){
       if(matches.length === 0 ){
-        res.say('There are no upcoming matches for Team '+teamA );
+        if(typeof teamA !== 'undefined'){
+          res.say('There are no upcoming matches for Team '+teamA );
+        }else{
+          res.say('There are no upcoming matches');
+        }
+
         return ;
       }
       //res.say('Team '+teamA+' has '+matches.length+ ' upcoming matches');
@@ -84,12 +95,19 @@ let upcommingMatchesIntent = [{
   seconds: 52,
   firstDateWasLater: false }
 */
+if(typeof teamA !== 'undefined'){
       if(+ new Date() - moment(matches[0].time*1000) > 0){
         res.say('Team '+teamA+' is playing now against '+ oppTeam.name + ' started '+moment(matches[0].time*1000).fromNow()+ ' in '+matches[0].league + ' Tournament ');
       }else{
         res.say('Team '+teamA+' will play against '+ oppTeam.name + ' in '+timeString + ' in '+matches[0].league + ' Tournament ');
       }
-
+}else{
+  if(+ new Date() - moment(matches[0].time*1000) > 0){
+    res.say('Team '+matches[0].team1.name+' is playing now against '+ matches[0].team2.name + ' started '+moment(matches[0].time*1000).fromNow()+ ' in '+matches[0].league + ' Tournament ');
+  }else{
+    res.say('Team '+matches[0].team1.name+' will play against '+ matches[0].team2.name + ' in '+timeString + ' in '+matches[0].league + ' Tournament ');
+  }
+}
 
 
 

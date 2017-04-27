@@ -10,7 +10,7 @@ var pastEncounterIntent = require('./intent/pastEncounterIntent');
 var teamInfoIntent = require('./intent/teamInfoIntent');
 var upcomingMatchIntent = require('./intent/upcomingMatchIntent');
 app.launch(function(req, res) {
-  var prompt = 'Ask anything about professional dota team.';
+  var prompt = 'Ask anything about your favourite dota team';
   res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 //RESULTTYPE
@@ -23,7 +23,7 @@ app.launch(function(req, res) {
 // "When do the [team] play next?"
 // "When is the next [team] game?"
 //
-// "How are the [team] doing?"
+
 // "is [team] playing now|today|tomorow"
 
 
@@ -39,12 +39,12 @@ app.launch(function(req, res) {
     http://api.steampowered.com/IDOTA2Match_570/GetTeamInfoByTeamID/v1?key=03953ECF4F671B4DBD31B98B45FA39FC&start_at_team_id=2512249
       -country
 */
-app.intent('teamInfoIntent', ...teamInfoIntent);
+//app.intent('teamInfoIntent', ...teamInfoIntent);
 app.intent('pastEncounterIntent', ...pastEncounterIntent);
 app.intent('pastSerieIntent', ...pastSerieIntent);
 app.intent('upcomingMatchIntent', ...upcomingMatchIntent);
 
-app.intent('dotastat', {
+/*app.intent('teamStatIntent', {
   'slots': {
     'TEAMA': 'TEAM',
     'RESULTTYPE': 'RESULTTYPE',
@@ -54,8 +54,10 @@ app.intent('dotastat', {
   },
   'utterances': [
     // 1 team open question
+    // "How are the [team] doing?"
     '{-|QUESTION} {|is|are} {|the} {-|TEAMA} {|doing}',
     // yes no question
+    //"is [team] playing now|today|tomorow"
     '{|is} {-|TEAMA} {-|STATUS} {-|DATE}',
     // 1 team result type
     '{-|TEAMA} {-|RESULTTYPE}'
@@ -116,7 +118,7 @@ app.intent('dotastat', {
     }
   }
 );
-
+*/
 //hack to support custom utterances in utterance expansion string
 console.log(app.utterances().replace(/\{\-\|/g, '{'));
 module.exports = app;
